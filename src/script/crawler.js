@@ -3,7 +3,8 @@ const DomParser = require('dom-parser');
 const fs = require('fs');
 
 let parser = new DomParser();
-let baseURL = 'https://www.sushiexpress.com.tw';
+const baseURL = 'https://www.sushiexpress.com.tw';
+const path = 'src/assets/img/mt-menu-images/';
 
 if (process.argv.length > 2 && process.argv[2] === '-f') {
   fs.readFile('src/script/mt_menu.html', 'utf8', function(err, html) {
@@ -18,6 +19,7 @@ if (process.argv.length > 2 && process.argv[2] === '-f') {
       console.error('Invalid content', content);
     }
   });
+  return;
 }
 
 axios.get(baseURL + '/magictouch/menu').then((rs) => {
@@ -35,10 +37,22 @@ axios.get(baseURL + '/magictouch/menu').then((rs) => {
 function parseMTHtml(html) {
   let content = [];
   let dom = parser.parseFromString(html);
+  let brands = dom.getElementsByClassName('subnav_list');
   let products = dom.getElementById('product_mt');
+
   products.getElementsByClassName('product_section').forEach((section) => {
+    let img = brands.find((ele) => {
+      // Match the section id to end with section english name
+      return section.getAttribute('id')
+        .match(
+          new RegExp('_' + ele.getAttribute('data-href') + '$')
+        )
+    }).getElementsByTagName('img')[0]
+      .getAttribute('src');
+
     let sectionContent = {
       id: section.getAttribute('id'),
+      img: img,
       name: section.firstChild.textContent,
       data: [],
     };
@@ -61,14 +75,9 @@ function parseMTHtml(html) {
 function saveContentToFile(content) {
   try {
     content.forEach((section) => {
+      section.img = saveImage(section.img);
       section.data.forEach((item) => {
-        let imgPath =
-          'src/assets/img/mt-menu-images/' +
-          item.img.substring(item.img.lastIndexOf('/') + 1);
-        if (!fs.existsSync(imgPath)) {
-          downloadImage(baseURL + item.img, imgPath);
-        }
-        item.img = item.img.substring(item.img.lastIndexOf('/') + 1);
+        item.img = saveImage(item.img);
       });
     });
     fs.writeFile('src/assets/mt-menu.json', JSON.stringify(content), () => {
@@ -79,8 +88,36 @@ function saveContentToFile(content) {
   }
 }
 
+async function saveImage(imgSrc) {
+  const imgPath = path + imgSrc.substring(imgSrc.lastIndexOf('/') + 1);
+  const url = baseURL + imgSrc;
+  if (!fs.existsSync(imgPath)) {
+    const writer = fs.createWriteStream(imgPath);
+    return axios({
+      method: 'get',
+      url: url,
+      responseType: 'stream',
+    }).then((res) => {
+      return new Promise((resolve, reject) => {
+        res.data.pipe(writer);
+        let error = null;
+        writer.on('error', (err) => {
+          error = err;
+          writer.close();
+          reject(err);
+        });
+        writer.on('close', () => {
+          if (!error) {
+            resolve(true);
+          }
+        });
+      });
+    });
+  }
+  return imgSrc.substring(imgSrc.lastIndexOf('/') + 1);
+}
+
 async function downloadImage(url, outputPath) {
-  console.log(url, outputPath);
   const writer = fs.createWriteStream(outputPath);
   return axios({
     method: 'get',
