@@ -1,0 +1,50 @@
+$magicBlue: #73c9dd;
+$magicBlack: #2d2a26;
+$magicRed: #ed80a8;
+$magicBrown: #eee3bd;
+$magicDarkBrown: #290a0a;
+
+@mixin background($color) {
+  background-color: $color;
+  border-color: $color;
+  color: black;
+}
+
+@mixin background-hover($color) {
+  background-color: white;
+  color: $color;
+  box-shadow: inset 0 0 2px $color;
+}
+
+.bg-blue {
+  @include background($magicBlue);
+}
+
+.btn.bg-blue:hover {
+  @include background-hover($magicBlue);
+}
+
+.bg-black {
+  @include background($magicBlack);
+  color: white;
+}
+
+.btn.bg-black:hover {
+  @include background-hover($magicBlack);
+}
+
+.bg-red {
+  @include background($magicRed);
+}
+
+.btn.bg-red:hover {
+  @include background-hover($magicRed);
+}
+
+.bg-brown {
+  @include background($magicBrown);
+}
+
+.text-dark-brown {
+  color: $magicDarkBrown !important;
+}

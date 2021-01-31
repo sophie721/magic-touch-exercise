@@ -61,6 +61,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
+      favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
+      title: eval(env.APP_TITLE),
       filename: config.build.index,
       template: 'index.html',
       inject: true,
