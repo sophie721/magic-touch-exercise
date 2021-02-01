@@ -55,7 +55,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
+      favicon: './static/favicon.ico',
       title: eval(env.APP_TITLE),
       filename: 'index.html',
       template: 'index.html',
