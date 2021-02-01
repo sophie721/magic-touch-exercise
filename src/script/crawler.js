@@ -9,7 +9,7 @@ const path = 'src/assets/img/mt-menu-images/';
 if (process.argv.length > 2 && process.argv[2] === '-f') {
   fs.readFile('src/script/mt_menu.html', 'utf8', function(err, html) {
     if (err) {
-      console.log(err);
+      console.error(err);
       return;
     }
     let content = parseMTHtml(html);
@@ -75,9 +75,11 @@ function parseMTHtml(html) {
 function saveContentToFile(content) {
   try {
     content.forEach((section) => {
-      section.img = saveImage(section.img);
+      saveImage(section.img);
+      section.img = section.img.substring(section.img.lastIndexOf('/') + 1);
       section.data.forEach((item) => {
-        item.img = saveImage(item.img);
+        saveImage(item.img);
+        item.img = item.img.substring(item.img.lastIndexOf('/') + 1);
       });
     });
     fs.writeFile('src/assets/mt-menu.json', JSON.stringify(content), () => {
@@ -114,29 +116,5 @@ async function saveImage(imgSrc) {
       });
     });
   }
-  return imgSrc.substring(imgSrc.lastIndexOf('/') + 1);
-}
-
-async function downloadImage(url, outputPath) {
-  const writer = fs.createWriteStream(outputPath);
-  return axios({
-    method: 'get',
-    url: url,
-    responseType: 'stream',
-  }).then((res) => {
-    return new Promise((resolve, reject) => {
-      res.data.pipe(writer);
-      let error = null;
-      writer.on('error', (err) => {
-        error = err;
-        writer.close();
-        reject(err);
-      });
-      writer.on('close', () => {
-        if (!error) {
-          resolve(true);
-        }
-      });
-    });
-  });
+  return new Promise((resolve) => { resolve(true) });
 }

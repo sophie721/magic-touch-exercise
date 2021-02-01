@@ -14,6 +14,7 @@ const mutations = {
       let content = require('@/assets/mt-menu.json');
       let images = require.context('@/assets/img/mt-menu-images', false, /\.png$/);
       content.forEach((section) => {
+        section.img = images('./' + section.img);
         section.data.forEach((item) => {
           item.img = images('./' + item.img);
         });
