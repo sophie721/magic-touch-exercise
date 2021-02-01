@@ -9,7 +9,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from './router'
 
-Vue.config.productionTip = false
 Vue.use(BootstrapVue)
   .use(IconsPlugin)
 
