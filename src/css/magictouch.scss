@@ -7,7 +7,7 @@ $magicBrown: #eee3bd;
 $magicDarkBrown: #290a0a;
 
 @mixin background($color) {
-  background-color: $color;
+  background-color: $color !important;
   border: 0;
   color: black;
 }
@@ -31,7 +31,7 @@ $magicDarkBrown: #290a0a;
 
 .bg-black {
   @include background($magicBlack);
-  color: white;
+  color: white !important;
 }
 
 .btn.bg-black:hover, .btn.bg-black:active {

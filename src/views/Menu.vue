@@ -1,6 +1,6 @@
 <template>
   <div class="menu">
-    <div class="navbar navbar-expand-lg fixed-top bg-brown text-dark-brown">
+    <div class="navbar navbar-expand-lg px-3 fixed-top bg-brown text-dark-brown">
       <div class="navbar-brand">{{appTitle}}</div>
       <ul class="nav" @click.prevent="navigate">
         <li
@@ -52,17 +52,19 @@
         </div>
       </div>
     </div>
-  <OrderModal v-model="selectedItem" @submit.prevent="updateOrder"></OrderModal>
+  <OrderModal v-model="selectedItem" @close="closeOrderModal"></OrderModal>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { Modal } from 'bootstrap'
 import OrderModal from '@/components/OrderModal.vue'
 
 export default {
   data: () => ({
     selectedItem: null,
+    orderModal: null,
   }),
   components: {
     OrderModal,
@@ -72,7 +74,7 @@ export default {
       content: (state) => state.menu.content,
     }),
     appTitle: function() {
-      return process.env.APP_TITLE
+      return process.env.VUE_APP_TITLE
     },
   },
   created() {
@@ -88,13 +90,21 @@ export default {
       })
     },
     openOrderModal(item) {
-      console.log('openOrderModal', item)
       this.selectedItem = item;
-      this.$bvModal.show('order-modal');
+      this.orderModal.show();
+    },
+    closeOrderModal() {
+      this.selectedItem = null;
+      this.orderModal.hide();
     },
     updateOrder(args) {
       console.log(args)
     },
+  },
+  mounted() {
+    this.$nextTick(function () {
+      this.orderModal = new Modal(document.getElementById('order-modal'));
+    })
   },
 }
 </script>
