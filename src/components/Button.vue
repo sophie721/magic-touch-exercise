@@ -19,9 +19,5 @@ export default {
   font-size: 1.7rem;
   border-width: 2px;
 }
-
-.btn:hover {
-  font-weight: 550;
-}
 </style>
 >

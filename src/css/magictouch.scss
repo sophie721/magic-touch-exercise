@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $magicBlue: #73c9dd;
 $magicBlack: #2d2a26;
 $magicRed: #ed80a8;
@@ -6,22 +8,25 @@ $magicDarkBrown: #290a0a;
 
 @mixin background($color) {
   background-color: $color;
-  border-color: $color;
+  border: 0;
   color: black;
 }
 
-@mixin background-hover($color) {
-  background-color: white;
-  color: $color;
-  box-shadow: inset 0 0 2px $color;
+@mixin background-active($color) {
+  background-color: color.scale($color, $lightness: -20%);
+  color: white;
+  box-shadow: 0 5px 20px color.scale($color, $lightness: -50%);
+  // Delay transition for touch screen UX
+  transition: all 0.2s;
+  transition-delay: 300ms;
 }
 
 .bg-blue {
   @include background($magicBlue);
 }
 
-.btn.bg-blue:hover {
-  @include background-hover($magicBlue);
+.btn.bg-blue:hover, .btn.bg-blue:active {
+  @include background-active($magicBlue);
 }
 
 .bg-black {
@@ -29,16 +34,16 @@ $magicDarkBrown: #290a0a;
   color: white;
 }
 
-.btn.bg-black:hover {
-  @include background-hover($magicBlack);
+.btn.bg-black:hover, .btn.bg-black:active {
+  @include background-active($magicBlack);
 }
 
 .bg-red {
   @include background($magicRed);
 }
 
-.btn.bg-red:hover {
-  @include background-hover($magicRed);
+.btn.bg-red:hover, .btn.bg-red:active {
+  @include background-active($magicRed);
 }
 
 .bg-brown {
